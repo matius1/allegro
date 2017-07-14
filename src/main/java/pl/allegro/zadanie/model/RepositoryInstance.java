@@ -14,6 +14,9 @@ public class RepositoryInstance {
     private int stars;
     private String createdAt;
 
+    public RepositoryInstance() {
+    }
+
     public RepositoryInstance(String fullName, String description, String cloneUrl, int stars, String createdAt) {
         this.fullName = fullName.replaceAll("\"", "");
         this.description = description.replaceAll("\"", "");

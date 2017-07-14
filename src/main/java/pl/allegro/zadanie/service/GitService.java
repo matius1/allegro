@@ -1,14 +1,15 @@
 package pl.allegro.zadanie.service;
 
+import pl.allegro.zadanie.model.RepositoryInstance;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
-import pl.allegro.zadanie.model.RepositoryInstance;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 /**
  * Created by Mateusz Skocz on 13.07.2017.
@@ -17,51 +18,39 @@ import java.util.List;
 public class GitService implements RepositoryServiceI {
 
     @Override
-    public List<RepositoryInstance> getRepoDetails(String owner, String repositoryName) {
+    public RepositoryInstance getRepoDetails(String owner, String repositoryName, TimeZone clientTimezone) {
 
-        List<RepositoryInstance> repoList = null;
         ObjectMapper mapper = new ObjectMapper();
-        URL url = null;
-        JsonNode rootNode = null;
-
+        RepositoryInstance repo = new RepositoryInstance();
         try {
-            url = new URL("https://api.github.com/users/" + owner + "/repos");
-        } catch (MalformedURLException e) {
-            System.err.println("Nie znaleziono uzytkownika " + owner + "na Github");
-//            e.printStackTrace();
+            URL url = new URL("https://api.github.com/repos/" + owner + "/" + repositoryName);
+            JsonNode json = mapper.readTree(url);
+
+            if (json.findPath("name").toString().replaceAll("\"", "").equals(repositoryName))
+                repo = new RepositoryInstance(
+                        json.findPath("full_name").toString(),
+                        json.findPath("description").toString(),
+                        json.findPath("clone_url").toString(),
+                        json.findPath("stargazers_count").intValue(),
+                        json.findPath("created_at").toString()
+                );
+
+            repo.setCreatedAt(changeTimeZone(repo.getCreatedAt(), clientTimezone));
+
+        } catch (IOException e) {
+            System.err.println("Nie znaleziono repozytorium '" + repositoryName + "' u uzytkownika '" + owner + "'.");
         }
 
-        if (url != null) {
-            try {
-                rootNode = mapper.readTree(url);
-            } catch (IOException e) {
-                System.err.println("Blad przy pobieraniu JSON'a dla uzytkownika " + owner);
-//                e.printStackTrace();
-            }
-        }
-
-        if (rootNode != null) {
-            repoList = new ArrayList<>();
-
-            for (int i = 0; i < rootNode.size(); i++) {
-                if (rootNode.get(i).findPath("name")
-                        .toString()
-                        .replaceAll("\"", "")
-                        .equals(repositoryName)) {
-                    RepositoryInstance repo = new RepositoryInstance(
-                            rootNode.get(i).findPath("full_name").toString(),
-                            rootNode.get(i).findPath("description").toString(),
-                            rootNode.get(i).findPath("clone_url").toString(),
-                            rootNode.get(i).findPath("stargazers_count").intValue(),
-                            rootNode.get(i).findPath("created_at").toString()
-                    );
-                    repoList.add(repo);
-                }
-            }
-        }
-
-        return repoList;
+        return repo;
     }
 
+    private String changeTimeZone(String date, TimeZone timezone) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime localDateTime = ZonedDateTime
+                .parse(date, formatter)
+                .withZoneSameInstant(timezone.toZoneId())
+                .toLocalDateTime();
+        return localDateTime.toString();
+    }
 
 }
