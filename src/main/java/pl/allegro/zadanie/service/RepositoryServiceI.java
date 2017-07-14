@@ -2,7 +2,6 @@ package pl.allegro.zadanie.service;
 
 import pl.allegro.zadanie.model.RepositoryInstance;
 
-import java.util.List;
 import java.util.TimeZone;
 
 /**

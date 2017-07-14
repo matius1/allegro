@@ -22,7 +22,7 @@ public class AppRestController {
         this.repositoryService = repositoryService;
     }
 
-    @RequestMapping(value = {"", "/repositories/"}, method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = {"", "/repositories/"}, method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.GET})
     public RepositoryInstance getNoParameters() {
         return new RepositoryInstance();
     }
