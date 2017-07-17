@@ -1,5 +1,6 @@
 package pl.allegro.zadanie.rest;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.allegro.zadanie.model.RepositoryInstance;
@@ -31,5 +32,8 @@ public class AppRestController {
     public RepositoryInstance getRepositoryDetails(@PathVariable String owner, @PathVariable String repositoryName, TimeZone timezone) {
         return repositoryService.getRepoDetails(owner, repositoryName, timezone);
     }
+
+
+
 
 }
