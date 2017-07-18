@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
 /**
- * Created by Mateusz Skocz on 13.07.2017.
+ * Created by Mateusz Skocz
  */
 @Service
 public class GitService implements RepositoryServiceI {
@@ -24,6 +24,7 @@ public class GitService implements RepositoryServiceI {
         RepositoryInstance repo = new RepositoryInstance();
         try {
             URL url = new URL("https://api.github.com/repos/" + owner + "/" + repositoryName);
+            System.out.println(url);
             JsonNode json = mapper.readTree(url);
 
             if (json.findPath("name").toString().replaceAll("\"", "").equals(repositoryName))
