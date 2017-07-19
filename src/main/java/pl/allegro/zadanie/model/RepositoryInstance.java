@@ -1,11 +1,8 @@
 package pl.allegro.zadanie.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by Mateusz Skocz
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class RepositoryInstance {
 
     private String fullName;
@@ -63,14 +60,6 @@ public class RepositoryInstance {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public String toJSON() {
-        return "{\"fullName\":\"" + fullName
-                + "\",\"description\":\"" + description
-                + "\",\"cloneUrl\":\"" + cloneUrl
-                + "\",\"stars\":" + stars
-                + ",\"createdAt\":\"" + createdAt + "\"}";
     }
 
     @Override

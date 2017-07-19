@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
@@ -24,7 +25,6 @@ public class GitService implements RepositoryServiceI {
         RepositoryInstance repo = new RepositoryInstance();
         try {
             URL url = new URL("https://api.github.com/repos/" + owner + "/" + repositoryName);
-            System.out.println(url);
             JsonNode json = mapper.readTree(url);
 
             if (json.findPath("name").toString().replaceAll("\"", "").equals(repositoryName))
